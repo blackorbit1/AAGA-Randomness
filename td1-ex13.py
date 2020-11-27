@@ -1,7 +1,9 @@
 import math
 from matplotlib import pyplot
 import random
+import numpy as np
 
+TEST_DIRECTORY = "tests-ex13/"
 
 def getNext(x0, a, c, m):
     return (a * x0 + c) & ((2**m)-1)
@@ -47,42 +49,54 @@ class Rand48(object):
         if res <= max : return res
         else : return self.get_number(max)
 
+probas = np.arange(0.0, 1.1, 0.1)
+
+all_bits = []
+
+for proba in probas:
+    bits = []
+
+    NB_BITS = 1000
+    #probability = 1
+    total = 0
+    alea = Rand48(156079716630527)
+    for i in range(NB_BITS):
+        bits.append(alea.bit_suivant())
+
+    possible_index = [i for i in range(NB_BITS)]
+    nb_1_to_add = NB_BITS * proba - NB_BITS * 0.5
+
+    while nb_1_to_add != 0 and len(possible_index) > 0:
+        tmp = int(random.random() * (len(possible_index)-1))
+        i = possible_index.pop(tmp)
+        
+        if nb_1_to_add > 0 and bits[i] == 0:
+            bits[i] = 1
+            nb_1_to_add -= 1
+        elif nb_1_to_add < 0 and bits[i] == 1:
+            bits[i] = 0
+            nb_1_to_add += 1
 
 
-bits = []
+    for i in range(NB_BITS):
+        total += bits[i]
 
-NB_BITS = 1000000
-probability = 1
-total = 0
-alea = Rand48(156079716630527)
-for i in range(NB_BITS):
-    bits.append(alea.bit_suivant())
+    print(total/NB_BITS)
+    #print(bytes(bits))
 
-possible_index = [i for i in range(NB_BITS)]
-nb_1_to_add = NB_BITS * probability - NB_BITS * 0.5
-
-while nb_1_to_add != 0 and len(possible_index) > 0:
-    tmp = int(random.random() * (len(possible_index)-1))
-    i = possible_index.pop(tmp)
-       
-    if nb_1_to_add > 0 and bits[i] == 0:
-        bits[i] = 1
-        nb_1_to_add -= 1
-    elif nb_1_to_add < 0 and bits[i] == 1:
-        bits[i] = 0
-        nb_1_to_add += 1
+    """
+    with open(TEST_DIRECTORY + "test" + str(proba), "wb") as f:
+        f.write(bytes(bits))
+    """
+    all_bits.append(bits)
 
 
-for i in range(NB_BITS):
-    total += bits[i]
+import gzip
 
-print(total/NB_BITS)
+sizes = []
+for bits in all_bits:
+    sizes.append(len(gzip.compress(bytes(bits))))
 
-
-"""
-for i in range(1, NB_ENTIERS_GENERES):
-    entiers.append(getNext(entiers[i-1], A, C, M))
-
-print(entiers)
-
-"""
+pyplot.plot(probas, sizes, marker = 'o')
+pyplot.title('test 2D')
+pyplot.show()
