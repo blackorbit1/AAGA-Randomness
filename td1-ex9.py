@@ -23,13 +23,30 @@ b = [1,0,1,1,0,1,1,0]
 0 123     
 -1 012    
 -2 -101
+
+
+Autre test : 
+    1001
+   *1010
+   -----
+    0000
+   10010
+  000000
++1001000
+--------
+ 1011010
 """
-if a[0] == 1 and a[1] == 1: # veut dire qu'il y aura forcément une retenue à la fin
+"""
+a = [1,0,0,1]
+b = [1,0,1,1,0,1,0]
+"""
+
+if b[0] == 1 and b[1] == 0 and len(b) >= 2*len(a): # veut dire qu'il y aura forcément une retenue à la fin
     profondeur = len(b) - len(a) 
     largeur = len(b) - 1
 else : 
-    profondeur = 1 + len(b) - len(a)
-    largeur = len(b)
+    profondeur = len(b) - len(a) + 1
+    largeur = len(b) 
 
 x = []
 positions_zeros = []
@@ -45,8 +62,8 @@ differences_started = False
 for position in range(len(a)-1, len(a)-len(b), -1): # il faut bien prendre len(b) parce que sinon on ratterait le should_be de la derniere retenue
     should_be = 0
     #pas trop sur de cette partie, ça devrait pas etre b[largeur + (position - (len(a)-1)) - 1] ??
-    print(">>> " + str(largeur + (position - (len(a)-1)) ) + "    " + str((position - (len(a)-1))))
-    actualy_is = b[largeur + (position - (len(a)-1)) ]
+    print(">>> " + str(largeur + (position - (len(a)-1)) - 1) + "    " + str((position - (len(a)-1))))
+    actualy_is = b[largeur + (position - (len(a)-1))]
 
     #retenue = 0
     print("=========")
